@@ -1,11 +1,40 @@
-const request = require('request');
+const yargs = require('yargs');
 
-const uri = 'https://maps.googleapis.com/maps/api/geocode/json?address=Jeanette Gardens 2 Pulang Lupa Uno Las Pinas&key=AIzaSyDQEEHdooI8i8v2WdijsjQRBkEIYStJe-Y';
+const geocode = require('./geocode/geocode');
+const weather = require('./weather/weather');
 
-request(uri, {
-    json: true
-}, (error, response, body) => {
-    console.log(`Address: ${body.results[0].formatted_address}`);
-    console.log(`Latitude: ${body.results[0].geometry.location.lat}`);
-    console.log(`Longlitude: ${body.results[0].geometry.location.lng}`);
-});
+const argv = yargs
+    .options({
+        a  : {
+             demand: true,
+             alias: 'address',
+             describe: 'To fetch weather for',
+             string: true
+        }
+    })
+    .help() 
+    .alias('help', 'h')
+    .argv;
+
+if (argv.address) {
+    geocode.geocodeAddress(argv.address, (errorMessage, results) => {
+            if (errorMessage) {
+                console.log(errorMessage);
+            } else {
+                if (results) {
+                    console.log(results.address)
+                    weather.getCurrent(results.latitude, results.longlitude, (errorMessage, results) => {
+                        if (errorMessage) {
+                            console.log(errorMessage)
+                        } else {
+                            console.log(`It's currently ${results.temperature}. It feels like ${results.apparentTemperature}.`);
+                        }
+                    })
+                } else {
+                    console.log(results);
+                }
+            }
+    });
+} else {
+    console.log('Address empty');
+}
