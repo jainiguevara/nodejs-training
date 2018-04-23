@@ -32,7 +32,6 @@ axios.get(geocodeURL).then((response) => {
     return axios.get(weatherURL);
 
 }).then((response) => {
-    console.log(response.data.statusCode);
     var temperature = response.data.currently.temperature;
     var apparentTemperature = response.data.currently.apparentTemperature;
 
