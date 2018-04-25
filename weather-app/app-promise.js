@@ -18,7 +18,7 @@ const argv = yargs
     const darkSkyAPIKey = 'a2fce8b057cfa0d05aced2e089df36e0';
     const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${googleAPIKey}`;
     
-
+ 
 axios.get(geocodeURL).then((response) => {
     if (response.data.status === "ZERO_RESULTS") {
         throw new Error('Unable to find that address')
@@ -32,6 +32,7 @@ axios.get(geocodeURL).then((response) => {
     return axios.get(weatherURL);
 
 }).then((response) => {
+    console.log(response.data.statusCode);
     var temperature = response.data.currently.temperature;
     var apparentTemperature = response.data.currently.apparentTemperature;
 
